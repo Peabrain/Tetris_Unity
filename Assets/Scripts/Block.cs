@@ -2,31 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/* this class is for the blocks.
+ * i build this in an extra class
+ * because of maybe animations or so
+ */
+
 public class Block : MonoBehaviour
 {
-    public Sprite [] Tex;
-    int stone = 0;
-    int newstone = 0;
+    public Sprite [] blocks;       // blocks that are possibly visible
+    int block = 0;              // actual block
+    int newblock = 0;           // new block if you want to change it
 
-    // Start is called before the first frame update
     void Start()
     {
         Renderer r = GetComponent<Renderer>();
-        gameObject.GetComponent<SpriteRenderer>().sprite = Tex[stone];
+        gameObject.GetComponent<SpriteRenderer>().sprite = blocks[block];      // first init the default block
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // update to the new block if necessary
         SpriteRenderer r = gameObject.GetComponent<SpriteRenderer>();
-        if (stone != newstone)
+        if (block != newblock)
         {
-            stone = newstone;
-            r.sprite = Tex[stone];
+            block = newblock;
+            r.sprite = blocks[block];
         }
     }
     public void SetColor(int stone)
     {
-        newstone = stone;
+        newblock = stone;
     }
 }

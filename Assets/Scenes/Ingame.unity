@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 391570090}
   - component: {fileID: 391570089}
   m_Layer: 0
-  m_Name: Figures
+  m_Name: Tiles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -766,7 +766,7 @@ GameObject:
   - component: {fileID: 1437326529}
   - component: {fileID: 1437326530}
   m_Layer: 0
-  m_Name: NextFigure
+  m_Name: NextTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -799,7 +799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 238b64f61f7067c49b17025776ddfce6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  figures: {fileID: 391570089}
+  tiles: {fileID: 391570089}
   ingame: {fileID: 1466011437}
 --- !u!1 &1466011436
 GameObject:
@@ -832,7 +832,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BlockPrefab: {fileID: 1327510962312840583, guid: d78d2854cdfc3004dac4733faff7f08b,
     type: 3}
-  nextfigure: {fileID: 1437326530}
+  NextTile: {fileID: 1437326530}
   ScoreText: {fileID: 1335516556}
   NameText: {fileID: 724163818}
   GameOverObj: {fileID: 1632308182}

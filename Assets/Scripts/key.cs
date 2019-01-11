@@ -1,12 +1,19 @@
 ﻿using UnityEngine;
 
+/* this class is for keyboard input
+ * it managing the pressing and the repeat of a key
+ */
+
+
 class key
 {
     bool pressed;
     float repeat;
-    float timer;
     KeyCode code;
 
+    float timer;
+
+    // init the key with the KeyCode and the repeat-timer
     public key(KeyCode code_, float repeat_)
     {
         code = code_;
@@ -18,6 +25,8 @@ class key
         pressed = false;
         timer = 0;
     }
+
+    // its only polling, but it works
 
     public bool checkSignal()
     {

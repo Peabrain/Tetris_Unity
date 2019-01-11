@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class InGame : MonoBehaviour
 {
-    // 
+    // object ingame needed from the unity engine
     public GameObject BlockPrefab;
-    public NextFigure nextfigure = null;
+    public NextTile NextTile = null;
     public Text ScoreText = null;
     public Text NameText = null;
     public GameObject GameOverObj = null;
@@ -115,11 +115,11 @@ public class InGame : MonoBehaviour
     {
         if(!start)
             crunchPlayfield();
-        figure = nextfigure.getNext();
-        figureColor = nextfigure.getColor();
+        figure = NextTile.getNext();
+        figureColor = NextTile.getColor();
         figurePosY = PlayfieldHeight - figure.GetLength(1);
         figurePosX = PlayfieldWidth / 2 - (figure.GetLength(2)) / 2;
-        figureRot = nextfigure.getRotation();
+        figureRot = NextTile.getRotation();
 
         if(checkCollisions(figurePosX,figurePosY,figureRot) != CollisionTypes.none)
         {
@@ -129,7 +129,7 @@ public class InGame : MonoBehaviour
         }
         setFigure(figureColor);
 
-        nextfigure.newNext();
+        NextTile.newNext();
         timer = 0;
 
         speedup_counter++;

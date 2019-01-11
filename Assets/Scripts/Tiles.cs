@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Figure : MonoBehaviour
+// this class is for the tiles (Spielsteine)
+
+public class Tiles : MonoBehaviour
 {
-    static int[,,] figure_z = new int[,,]
+    static int[,,] tile_z = new int[,,]
     {
         {
             { 0,0,0 },
@@ -18,7 +20,7 @@ public class Figure : MonoBehaviour
         }
     };
 
-    static int[,,] figure_s = new int[,,]
+    static int[,,] tile_s = new int[,,]
     {
             {
                 { 0,0,0 },
@@ -32,7 +34,7 @@ public class Figure : MonoBehaviour
             }
     };
 
-    static int[,,] figure_L = new int[,,]
+    static int[,,] tile_L = new int[,,]
     {
             {
                 { 0,1,0 },
@@ -56,7 +58,7 @@ public class Figure : MonoBehaviour
             }
     };
 
-    static int[,,] figure_l = new int[,,]
+    static int[,,] tile_l = new int[,,]
     {
             {
                 { 0,1,0 },
@@ -80,7 +82,7 @@ public class Figure : MonoBehaviour
             }
     };
 
-    static int[,,] figure_T = new int[,,]
+    static int[,,] tile_T = new int[,,]
     {
             {
                 { 0,0,0 },
@@ -104,7 +106,7 @@ public class Figure : MonoBehaviour
             }
     };
 
-    static int[,,] figure_I = new int[,,]
+    static int[,,] tile_I = new int[,,]
     {
             {
                 { 0,0,1,0 },
@@ -119,7 +121,7 @@ public class Figure : MonoBehaviour
                 { 0,0,0,0 },
             },
     };
-    static int[,,] figure_O = new int[,,]
+    static int[,,] tile_O = new int[,,]
     {
             {
                 { 1,1 },
@@ -127,18 +129,19 @@ public class Figure : MonoBehaviour
             },
     };
 
+    // tile-list
     int[][,,] tab = new int[][,,]
     {
-        figure_z,
-        figure_s,
-        figure_l,
-        figure_L,
-        figure_I,
-        figure_T,
-        figure_O
+        tile_z,
+        tile_s,
+        tile_l,
+        tile_L,
+        tile_I,
+        tile_T,
+        tile_O
     };
 
-    public int[,,] getFigure(int i)
+    public int[,,] getTile(int i)
     {
         return tab[i];
     }
@@ -147,12 +150,10 @@ public class Figure : MonoBehaviour
         return tab.Length;
     }
 
-    // Start is called before the first frame update
     void Start()
     {
     }
 
-    // Update is called once per frame
     void Update()
     {
     }

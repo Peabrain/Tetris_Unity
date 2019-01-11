@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NextFigure : MonoBehaviour
+// this class is to manage the random tiles selection
+
+public class NextTile : MonoBehaviour
 {
     int next = 0;
     int color = 0;
-    int rot = 0;
+    int rotation = 0;
     bool update = false;
 
-    public Figure figures = null;
+    public Tiles tiles = null;
     public InGame ingame = null;
 
-    List<GameObject> blocks = new List<GameObject>();
-    // Start is called before the first frame update
+    List<GameObject> blocks = new List<GameObject>(); // save sprites for the next tile for visibility
+
     void Start()
     {
         randomize();
@@ -21,26 +23,26 @@ public class NextFigure : MonoBehaviour
 
     void randomize()
     {
-        next = Random.Range(0, 8957403) % figures.getMax();
+        next = Random.Range(0, 8957403) % tiles.getMax();
         color = (Random.Range(0, 58295932) % 7) + 1;
-        int[,,] f = figures.getFigure(next);
-        rot = (Random.Range(0, 58295932) % f.GetLength(0));
+        int[,,] f = tiles.getTile(next);
+        rotation = (Random.Range(0, 58295932) % f.GetLength(0));
     }
 
-    // Update is called once per frame
+    // update the next tile graphic
     void Update()
     {
         if(update)
         {
             clear();
 
-            int[,,] figure = figures.getFigure(next);
+            int[,,] figure = tiles.getTile(next);
 
             for (int y = 0; y < figure.GetLength(1); y++)
             {
                 for (int x = 0; x < figure.GetLength(2); x++)
                 {
-                    if(figure[rot,y,x] != 0)
+                    if(figure[rotation, y,x] != 0)
                     {
                         GameObject go = Instantiate(ingame.BlockPrefab, transform.position, Quaternion.identity) as GameObject;
                         go.transform.SetParent(this.transform);
@@ -51,7 +53,6 @@ public class NextFigure : MonoBehaviour
                         Block s = go.GetComponent<Block>();
                         s.SetColor(color);
                         blocks.Add(go);
-                        //                    PlayfieldObj[y * PlayfieldWidth + x] = go;
                     }
                 }
             }
@@ -76,7 +77,7 @@ public class NextFigure : MonoBehaviour
 
     public int[,,] getNext()
     {
-        return figures.getFigure(next);
+        return tiles.getTile(next);
     }
     public int getColor()
     {
@@ -84,6 +85,6 @@ public class NextFigure : MonoBehaviour
     }
     public int getRotation()
     {
-        return rot;
+        return rotation;
     }
 }
