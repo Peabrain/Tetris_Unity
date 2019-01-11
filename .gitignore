@@ -1,0 +1,8 @@
+/Library/StateCache
+/Library/cache
+/Library/metadata
+/Library/PackageCache
+/Library/ScriptAssemblies
+/Library/ShaderCache
+/Library/*.log
+/Library/ShaderCache.db
