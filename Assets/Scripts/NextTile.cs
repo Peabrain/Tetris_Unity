@@ -36,18 +36,18 @@ public class NextTile : MonoBehaviour
         {
             clear();
 
-            int[,,] figure = tiles.getTile(next);
+            int[,,] tile = tiles.getTile(next);
 
-            for (int y = 0; y < figure.GetLength(1); y++)
+            for (int y = 0; y < tile.GetLength(1); y++)
             {
-                for (int x = 0; x < figure.GetLength(2); x++)
+                for (int x = 0; x < tile.GetLength(2); x++)
                 {
-                    if(figure[rotation, y,x] != 0)
+                    if(tile[rotation, y,x] != 0)
                     {
                         GameObject go = Instantiate(ingame.BlockPrefab, transform.position, Quaternion.identity) as GameObject;
                         go.transform.SetParent(this.transform);
-                        go.transform.localPosition = new Vector3(-(0.1f * ((figure.GetLength(2) + 1) & 1) + 0.2f * (-figure.GetLength(2) / 2 + x)),
-                                        0.1f * ((figure.GetLength(1) + 1) & 1) + 0.2f * (-figure.GetLength(1) / 2 + y),
+                        go.transform.localPosition = new Vector3(-(0.1f * ((tile.GetLength(2) + 1) & 1) + 0.2f * (-tile.GetLength(2) / 2 + x)),
+                                        0.1f * ((tile.GetLength(1) + 1) & 1) + 0.2f * (-tile.GetLength(1) / 2 + y),
                                         0);
                         go.transform.localRotation = Quaternion.identity;
                         Block s = go.GetComponent<Block>();

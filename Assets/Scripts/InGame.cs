@@ -14,43 +14,55 @@ public class InGame : MonoBehaviour
     public GameObject PauseText = null;
 
 
+    Random rand = new Random();
+
     int PlayfieldWidth = 11;
     int PlayfieldHeight = 20;
 
+    // array for saving the temp GameObjects
     GameObject[] PlayfieldObj = null;
+    // in playfield stores the actual block screen
+    // 0 for empty
+    // 1 .. 7 colored blocks 
     int[] Playfield = null;
 
-    int figurePosX = 0;
-    int figurePosY = 0;
-    int figureRot = 0;
-    int figureColor = 1;
-
-    Random rand = new Random();
+    int tilePosX = 0;
+    int tilePosY = 0;
+    int tileRot = 0;
+    int tileColor = 1;
 
     enum CollisionTypes {none,wall,stone};
 
-    int[,,] figure = null;
+    // actual tile
+    int[,,] tile = null;
 
-    float timer = 0.0f;
+    // auto-falling-down-autofalling_timer
+    float autofalling_timer = 0.0f;
+    float autofalling_speed = 0.5f;
+
     int Score = 0;
 
+    // states of the game
     public enum STATE {wait,running,gameover};
     STATE state = STATE.wait;
 
-    float stonespeed = 0.5f;
     static float keyspeed = 0.15f;
     key left = new key(KeyCode.LeftArrow, keyspeed);
     key right= new key(KeyCode.RightArrow, keyspeed);
     key down = new key(KeyCode.DownArrow, keyspeed / 2);
     key up = new key(KeyCode.UpArrow, 0);
 
+    // defines how many tiles to set before speed up
     int speedup = 10;
     int speedup_counter = 0;
+    float speedup_factor = 0.9f;
 
     // Start is called before the first frame update
     void Start()
     {
         GameOverObj.SetActive(false);
+
+        // create the blocks and init the playfield
         PlayfieldObj = new GameObject[PlayfieldWidth * PlayfieldHeight];
         Playfield = new int[PlayfieldWidth * PlayfieldHeight];
         for (int y = 0;y < PlayfieldHeight; y++)
@@ -68,7 +80,10 @@ public class InGame : MonoBehaviour
                 Playfield[y * PlayfieldWidth + x] = 0;
             }
         }
-        newFigure(true);
+
+        // init the randomizer for next tile
+        newTile(true);
+
         updateScore();
         NameText.text = "Player 1";
         state = STATE.running;
@@ -76,7 +91,8 @@ public class InGame : MonoBehaviour
         GameOverObj.SetActive(false);
     }
 
-    void UpdatePlayfield()
+    // this is for the renderupdate
+    void updatePlayfield()
     {
         for (int y = 0; y < PlayfieldHeight; y++)
         {
@@ -88,14 +104,14 @@ public class InGame : MonoBehaviour
         }
     }
 
-    void setFigure(int value)
+    void setTile(int value)
     {
-        for (int y = 0; y < figure.GetLength(1); y++)
+        for (int y = 0; y < tile.GetLength(1); y++)
         {
-            for (int x = 0; x < figure.GetLength(2); x++)
+            for (int x = 0; x < tile.GetLength(2); x++)
             {
-                if (figure[figureRot, y, x] != 0)
-                    Playfield[(figurePosY + y) * PlayfieldWidth + figurePosX + x] = value;
+                if (tile[tileRot, y, x] != 0)
+                    Playfield[(tilePosY + y) * PlayfieldWidth + tilePosX + x] = value;
             }
         }
     }
@@ -111,50 +127,50 @@ public class InGame : MonoBehaviour
         }
     }
 
-    void newFigure(bool start)
+    void newTile(bool start)
     {
         if(!start)
             crunchPlayfield();
-        figure = NextTile.getNext();
-        figureColor = NextTile.getColor();
-        figurePosY = PlayfieldHeight - figure.GetLength(1);
-        figurePosX = PlayfieldWidth / 2 - (figure.GetLength(2)) / 2;
-        figureRot = NextTile.getRotation();
+        tile = NextTile.getNext();
+        tileColor = NextTile.getColor();
+        tilePosY = PlayfieldHeight - tile.GetLength(1);
+        tilePosX = PlayfieldWidth / 2 - (tile.GetLength(2)) / 2;
+        tileRot = NextTile.getRotation();
 
-        if(checkCollisions(figurePosX,figurePosY,figureRot) != CollisionTypes.none)
+        if(checkCollisions(tilePosX,tilePosY,tileRot) != CollisionTypes.none)
         {
             state = STATE.gameover;
             GameOverObj.SetActive(true);
             PauseText.SetActive(true);
         }
-        setFigure(figureColor);
+        setTile(tileColor);
 
         NextTile.newNext();
-        timer = 0;
+        autofalling_timer = 0;
 
         speedup_counter++;
         if (speedup_counter == speedup)
         {
             speedup_counter = 0;
-            stonespeed *= 0.9f;
+            autofalling_speed *= speedup_factor;
         }
 
     }
 
-    CollisionTypes checkCollisions(int figurePosXnew,int figurePosYnew,int figureRotnew)
+    CollisionTypes checkCollisions(int tilePosXnew,int tilePosYnew,int tileRotnew)
     {
-        for (int y = 0; y < figure.GetLength(1); y++)
+        for (int y = 0; y < tile.GetLength(1); y++)
         {
-            for (int x = 0; x < figure.GetLength(2); x++)
+            for (int x = 0; x < tile.GetLength(2); x++)
             {
-                if (figure[figureRotnew, y, x] != 0)
+                if (tile[tileRotnew, y, x] != 0)
                 {
-                    if (figurePosYnew + y < 0)
+                    if (tilePosYnew + y < 0)
                         return CollisionTypes.stone;
-                    if (figurePosXnew + x < 0 || figurePosXnew + x >= PlayfieldWidth)
+                    if (tilePosXnew + x < 0 || tilePosXnew + x >= PlayfieldWidth)
                         return CollisionTypes.wall;
-                    if (Playfield[(figurePosYnew + y) * PlayfieldWidth + figurePosXnew + x] != 0)
-                        if(figurePosYnew != figurePosY)
+                    if (Playfield[(tilePosYnew + y) * PlayfieldWidth + tilePosXnew + x] != 0)
+                        if(tilePosYnew != tilePosY)
                             return CollisionTypes.stone;
                         else
                             return CollisionTypes.wall;
@@ -175,6 +191,7 @@ public class InGame : MonoBehaviour
         Score++;
         int lineCount = 0;
 
+        // collect deletable columns
         List<int> columnsToClear = new List<int>();
         for (int x = 0; x < PlayfieldWidth; x++)
         {
@@ -188,7 +205,7 @@ public class InGame : MonoBehaviour
                 columnsToClear.Add(x);
         }
 
-
+        // check rows to delete
         for (int y = 0; y < PlayfieldHeight; y++)
         {
             int countBlocks = 0;
@@ -205,6 +222,7 @@ public class InGame : MonoBehaviour
             }
         }
 
+        // crunch rows
         for (int x = 0; x < PlayfieldWidth; x++)
         {
             int y_up = 0;
@@ -220,72 +238,78 @@ public class InGame : MonoBehaviour
             }
         }
 
+        // delete deleable columns
         foreach(int x in columnsToClear)
         {
             for (int y = 0; y < PlayfieldHeight; y++)
                 Playfield[y * PlayfieldWidth + x] = 0;
         }
 
+        // count scores
         Score += (lineCount + columnsToClear.Count) * 10;
         updateScore();
     }
 
-    void Control()
+    void control()
     {
-        int figurePosXnew = figurePosX;
-        int figurePosYnew = figurePosY;
-        int figureRotnew = figureRot;
+        // save old tilestate
+        int tilePosXnew = tilePosX;
+        int tilePosYnew = tilePosY;
+        int tileRotnew = tileRot;
 
+        // check the keys and get new tilestate
         if (down.checkSignal())
         {
-            figurePosYnew = figurePosY - 1;
-            timer = 0;
+            tilePosYnew = tilePosY - 1;
+            autofalling_timer = 0;
         }
         if (left.checkSignal())
-            figurePosXnew = figurePosX + 1;
+            tilePosXnew = tilePosX + 1;
         if (right.checkSignal())
-            figurePosXnew = figurePosX - 1;
+            tilePosXnew = tilePosX - 1;
         if (up.checkSignal())
-            figureRotnew = (figureRot + 1) % figure.GetLength(0);
+            tileRotnew = (tileRot + 1) % tile.GetLength(0);
 
+        // update keys
         float delta = Time.deltaTime;
         down.update(delta);
         left.update(delta);
         right.update(delta);
         up.update(delta);
 
-        if (figurePosYnew == figurePosY)
+        // auto-falling-down
+        if (tilePosYnew == tilePosY)
         {
-            if (timer >= stonespeed)
+            if (autofalling_timer >= autofalling_speed)
             {
-                figurePosYnew = figurePosY - 1;
-                timer -= stonespeed;
+                tilePosYnew = tilePosY - 1;
+                autofalling_timer -= autofalling_speed;
             }
         }
         else
-            timer = 0.0f;
-        timer += Time.deltaTime;
+            autofalling_timer = 0.0f;
+        autofalling_timer += Time.deltaTime;
 
-
-        if (figurePosXnew != figurePosX || figurePosYnew != figurePosY || figureRotnew != figureRot)
+        // if tilestate has changed, do something
+        if (tilePosXnew != tilePosX || tilePosYnew != tilePosY || tileRotnew != tileRot)
         {
-            setFigure(0);
+            setTile(0); // clear the actual tile from the playfield
 
-            if (figureRotnew != figureRot)
+            if (tileRotnew != tileRot)
             {
-                if (checkCollisions(figurePosXnew, figurePosYnew, figureRotnew) == CollisionTypes.none)
-                    figureRot = figureRotnew;
+                if (checkCollisions(tilePosXnew, tilePosYnew, tileRotnew) == CollisionTypes.none)
+                    tileRot = tileRotnew;
             }
 
-            if (figurePosXnew != figurePosX || figurePosYnew != figurePosY)
+            if (tilePosXnew != tilePosX || tilePosYnew != tilePosY)
             {
-                switch (checkCollisions(figurePosXnew, figurePosYnew, figureRot))
+                switch (checkCollisions(tilePosXnew, tilePosYnew, tileRot))
                 {
                     case CollisionTypes.none:
                         { 
-                            setFigure(0);
-                            figurePosX = figurePosXnew;
-                            figurePosY = figurePosYnew;
+                            setTile(0); // clear the actual tile from the playfield
+                            tilePosX = tilePosXnew;
+                            tilePosY = tilePosYnew;
                         }
                         break;
                     case CollisionTypes.wall:
@@ -294,19 +318,20 @@ public class InGame : MonoBehaviour
                         break;
                     case CollisionTypes.stone:
                         {
-                            setFigure(figureColor);
-                            newFigure(false);
+                            setTile(tileColor);
+                            newTile(false);
                         }
                         break;
                 }
             }
-            setFigure(figureColor);
+            setTile(tileColor);
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // control the gamestates
+
         if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
         switch (state)
@@ -319,11 +344,11 @@ public class InGame : MonoBehaviour
                     GameOverObj.SetActive(false);
                     PauseText.SetActive(false);
                     clearPlayfield();
-                    timer = 0;
+                    autofalling_timer = 0;
                     Score = 0;
-                    stonespeed = 0.5f;
+                    autofalling_speed = 0.5f;
                     speedup_counter = 0;
-                    newFigure(true);
+                    newTile(true);
                     updateScore();
                     down.clear();
                     left.clear();
@@ -339,8 +364,8 @@ public class InGame : MonoBehaviour
                     state = STATE.wait;
                     return;
                 }
-                Control();
-                UpdatePlayfield();
+                control();
+                updatePlayfield();
             }break;
             case STATE.wait:
             {
