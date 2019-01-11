@@ -321,6 +321,8 @@ public class InGame : MonoBehaviour
                     clearPlayfield();
                     timer = 0;
                     Score = 0;
+                    stonespeed = 0.5f;
+                    speedup_counter = 0;
                     newFigure(true);
                     updateScore();
                     down.clear();
